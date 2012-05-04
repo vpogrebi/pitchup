@@ -10,6 +10,8 @@ Write a program to find a pitch based on this clue:
 
 IMPLEMENTATION NOTES:
 
+This project is implemeted using Python 2.7
+
 1. All "heavy lifting" is done within Number class (number.py). This class defines one public 
 	method (getDivisorSubsets()) that returns a list of all possible subsets of given number's 
 	divisors. Number.getDivisorSubsets() uses lots of system resources (CPU and memory)
