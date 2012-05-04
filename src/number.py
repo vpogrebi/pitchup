@@ -26,7 +26,7 @@ class Number:
         return divisors
 
     def _getDivisorSubsets( self ):
-        "Get a list containing all subsets of <self.value>'s divisors"
+        "Get a list containing all subsets of <self.divisors>"
         f = lambda l: reduce( lambda z, x: z + [y + [x] for y in z], l, [[]] )
         subsets = f( self.divisors )
         return subsets
