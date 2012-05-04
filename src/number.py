@@ -22,9 +22,3 @@ class Number:
                     self.divisors.append( num )
                 else:
                     self.divisors.extend( [num, self.value / num] )
-
-    def getDivisorSubsets( self ):
-        "Get a list containing all subsets of <self.divisors>"
-        f = lambda l: reduce( lambda z, x: z + [y + [x] for y in z], l, [[]] )
-        subsets = f( self.divisors )
-        return subsets
