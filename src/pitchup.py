@@ -9,10 +9,25 @@ import threading
 from number import Number
 
 def checkNum( num ):
-    "Check if given number <num> passes requirements"
+    """Check if given <self.value> satisfies following requirements:
+        1. sum(self.divisors) > self.value
+        2. No subset from <self.subsets> adds up to exactly <self.value>
+    """
     num = Number( num )
-    if num.isOfInterest():
-        print "Selected pitch: %i (Divisors: %s, Subsets: %s)" % ( num.value, num.divisors, num.subsets )
+
+    isOfInterest = True
+
+    if sum( num.divisors ) > num.value:
+        subsets = num.getDivisorSubsets()
+        for subset in subsets:
+            if sum( subset ) == num.value:
+                isOfInterest = False
+                break
+    else:
+        isOfInterest = False
+
+    if isOfInterest:
+        print "Selected pitch: %i (Divisors: %s, Subsets: %s)" % ( num.value, num.divisors, subsets )
 
 def pitchup():
     "Find all numbers in the range 1 .. 553 that pass requirements"
