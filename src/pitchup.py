@@ -8,7 +8,7 @@ import time
 import threading
 from number import Number
 
-pith = None
+pitches = []
 
 def powerset( seq ):
     """
@@ -27,7 +27,7 @@ def checkNum( num ):
         1. sum(num.divisors) > num.value
         2. No subset from powerset of <num.divisors> adds up to exactly <num.value>
     """
-    global pitch
+    global pitches
 
     num = Number( num )
 
@@ -43,7 +43,7 @@ def checkNum( num ):
         isOfInterest = False
 
     if isOfInterest:
-        pitch = num.value
+        pitches.append( num.value )
 
 def pitchup():
     "Find all numbers in the range 1 .. 553 that pass requirements"
@@ -61,7 +61,8 @@ def pitchup():
 
 if __name__ == '__main__':
     pitchup()
-    if pitch:
-        print "Selected pitch: %i" % pitch
+    if pitches != []:
+        for pitch in pitches:
+            print "Selected pitch: %i" % pitch
     else:
         print "No pitch selected"
