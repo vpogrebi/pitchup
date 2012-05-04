@@ -8,47 +8,38 @@ Write a program to find a pitch based on this clue:
 "Join us at pitch x. x is a number between 1 and 553 such that the sum of x's divisors 
 (not including x) is greater than x but no subset of x's divisors add up to exactly x."*
 
+
 IMPLEMENTATION NOTES:
 
-This project is implemeted using Python 2.7
+This project is implemented using Python 2.7
 
-1. All "heavy lifting" is done within Number class (number.py). This class defines one public 
-	method (getDivisorSubsets()) that returns a list of all possible subsets of given number's 
-	divisors. Number.getDivisorSubsets() uses lots of system resources (CPU and memory)
-	and takes long time to execute for some numbers (the larger divisors set - the larger
-	number of permutations are being evaluated) 
-	
-2. Main program (pitchup_threading.py) uses "threading" to validate each number in the 
-	range 1 ... 553 in parallel (multi-threading). This is very primitive use of "threading" - 
-	as there is no shared resources that would require use of Lock or RLock. Each thread 
-	executes checkNum() procedure which validates if given number passes our two main 
-	requirements. IMPORTANT: pitchup_threading.py - uses lots of system resources (CPU and memory)
-	and takes long time to execute (see comments for Number.getDivisorSubsets() above)
-	
-3. To avoid users waiting for a long time for pitchup_threading.py to complete, I implemented
-	second program - that searches for one single "pitch" and exits. "pitchup_single.py"
-	finds expected result (70) quite quickly	
+There have been few rafactoring iterations - that gradually improved program's performance, 
+ultimately leading to the given, quite well performing implementation.
 
-4. Both "pitchup_threading.py" and "pitchup_single.py" - implement checkNum() procedure that
-	validates the number. It first checks if the sum of all number's divisors (excluding the 
-	number itself) is greater that than the number, and if yes (this means given number passed 
-	first requirement) - it executes num.getDivisorSubsets() to get complete list if divisor's 
-	subsets and checks second requirement. Checking sum(num.divisors) before getting the subsets 
-	list - eliminates (potentially) the need to execute num.getDivisorSubsets() for some numbers, 
-	which improves overall performance (as num.getDivisorSubsets() - takes lots of system resources)
-	
-	
-IMPORTANT:
-	
-Number.getDivisionSubsets() method (to be exact - inline procedure f() defined in that method) - 
-can get extremely slow and can require lots of resources (CPU and memory) for some numbers. This
-is explained by the number of permutations evaluated by this procedure when constructing a list of
-all subsets of number's divisors set. The larger the number's divisors set (num.divisors) - the
-larger number of permutations are being evaluated, and the more resources it takes to construct
-the subsets list. I admit that given algorithm is far from optimal... I could probably come up 
-with a better (but more complex) implementation of this algorithm - if I had taken more time to do so.
+If interested in details (to see how each refactoring iteration led to performance improvements -
+contact developer at vpogrebi@iname.com). Notes below correspond to the latest (most current)
+implementation:
 
+1. Number class (number.py) is used as helper. Initially, this class was used to perform all the
+	"heavy weight lifting" (it implemented method to generate entire POWERSET of number's divisors).
+	Now it is used only as a minor helper class - that loads numbers divisors set. In general, this
+	class can be safely replaced by a single procedure within pitchup.py 
 
+2. Main program (pitchup.py) uses threading module to evaluate all individual numbers (in the range
+	1 .. 553) in parallel. This is very primitive use of threading - as this program does not
+	involve resource sharing that would require use of locking (Lock or RLock), notifications, etc.
+
+3. All "heavy lifting" is done within pitchup.powerset() procedure - which implements GENERATOR
+	design pattern. Instead of loading entire POWERSET (a set of all subsets) of number's divisors
+	into memory (which proved to be highly resource-bound and time consuming process), this procedure
+	allows getting POWERSET items iteratively, one at a time. This results in really *huge* 
+	performance improvements - due to the fact instead of generating entire POWERSET (as I had in 
+	previous iterations) and evaluating individual subsets, we now evaluate each individual subset
+	as it gets fetched by generator, and stop processing as soon as we find one subset that does 
+	not pass validation. This saves time, memory, and avoids generating (potentially large number of)
+	subsets that are not needed for our evaluation   
+
+	
 RESULT:
 
-Given program (pitchup_single.py) finds following solution to the given problem: 70
+Program (pitchup.py) finds (quite quickly) following solution to the given problem: 70
