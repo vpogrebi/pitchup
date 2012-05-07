@@ -20,16 +20,15 @@ If interested in details (to see how each refactoring iteration led to performan
 contact developer at vpogrebi@iname.com. Notes below correspond to the latest (most current)
 implementation:
 
-1. Number class (number.py) is used as helper. Initially, this class was used to perform all the
-	"heavy weight lifting" (it implemented method to generate entire POWERSET of number's divisors).
-	Now it is used only as a minor helper class - that loads number's divisors set. In general, 
-	this class can be safely replaced by a single procedure within pitchup.py 
+1. Number class (number.py) is used as helper. It implements methods that load number's divisors
+	set (__loadDivisors()) and a generator method powerset() that returns POWERSET of number's 
+	divisors. 
 
 2. Main program (pitchup.py) uses "threading" to evaluate all individual numbers (in the range
 	1 .. 553) in parallel. This is very primitive use of threading - as this program does not
 	involve resource sharing that would require use of locking (Lock or RLock), notifications, etc.
 
-3. All "heavy lifting" is done within pitchup.powerset() procedure - which implements GENERATOR
+3. All "heavy lifting" is done within number._powerset() procedure - which implements GENERATOR
 	design pattern. Instead of loading entire POWERSET (a set of all subsets) of number's divisors
 	into memory (which proved to be highly resource-bound and time consuming process), this procedure
 	allows getting POWERSET items iteratively, one at a time. This results in really *huge* 
