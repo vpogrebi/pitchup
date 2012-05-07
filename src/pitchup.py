@@ -10,18 +10,6 @@ from number import Number
 
 pitches = []
 
-def powerset( seq ):
-    """
-    Returns all the subsets of this set. This is a generator.
-    """
-    if len( seq ) <= 1:
-        yield seq
-        yield []
-    else:
-        for item in powerset( seq[1:] ):
-            yield [seq[0]] + item
-            yield item
-
 def checkNum( num ):
     """Check if given <num.value> satisfies following requirements:
         1. sum(num.divisors) > num.value
@@ -34,7 +22,7 @@ def checkNum( num ):
     isOfInterest = True
 
     if sum( num.divisors ) > num.value:
-        subsets = powerset( num.divisors )
+        subsets = num.powerset()
         for subset in subsets:
             if sum( subset ) == num.value:
                 isOfInterest = False
